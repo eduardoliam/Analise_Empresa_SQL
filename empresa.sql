@@ -1,38 +1,38 @@
- with quiz_funnel as(
-  select question,
-         count(distinct user_id) as responses
-  from survey
-  group by 1
-  order by 2 desc
+ WITH quiz_funnel as(
+  SELECT question,
+         COUNT(DISTINCT user_id) AS responses
+  FROM survey
+  GROUP BY 1
+  ORDER BY 2 DESC
 )
-select * from quiz_funnel;
+SELECT * FROM quiz_funnel;
 
-with funnel as (
-  select distinct q.user_id as 'quiz',
-       h.user_id is not null as 'is_home_try_on',
+WITH funnel AS (
+  SELECT DISTINCT q.user_id AS 'quiz',
+       h.user_id IS NOT NULL AS 'is_home_try_on',
        h.number_of_pairs,
-       p.user_id is not null as 'is_purchase'
-from quiz as q
-left join home_try_on as h
-  on q.user_id = h.user_id
-left join purchase as p
-  on p.user_id = q.user_id
+       p.user_id IS NOT NULL AS 'is_purchase'
+FROM quiz AS q
+LEFT JOIN home_try_on AS h
+  ON q.user_id = h.user_id
+LEFT JOIN purchase AS p
+  ON p.user_id = q.user_id
 )
-select count(quiz) as 'quiz_num',
-       sum(is_home_try_on) as 'home_try_on_num',
-       sum(is_purchase) as 'purchase_num'
-from funnel;
+SELECT COUNT(quiz) AS 'quiz_num',
+       sum(is_home_try_on) AS 'home_try_on_num',
+       sum(is_purchase) AS 'purchase_num'
+FROM funnel;
 
-select num_pairs, round(1.0 * sum(is_purchase)/sum(is_home_try_on),2) as purchase_rate
-from funnel where num_pairs is '3 pairs' or num_pairs is '5 pairs' group by num_pairs;
+SELECT num_pairs, round(1.0 * sum(is_purchase)/sum(is_home_try_on),2) AS purchase_rate
+FROM funnel WHERE num_pairs IS '3 pairs' OR num_pairs IS '5 pairs' GROUP BY num_pairs;
 
-select style,
- count(user_id) as responses
-from quiz 
-group by 1 order by 2 desc;
+SELECT style,
+ COUNT(user_id) AS responses
+FROM quiz 
+GROUP BY 1 ORDER BY 2 DESC;
 
-select style,
- count(*) as purchases 
-from purchase 
-group by 1 order by 2 desc;
+SELECT style,
+ COUNT(*) AS purchases 
+FROM purchase 
+GROUP BY 1 ORDER BY 2 DESC;
 
